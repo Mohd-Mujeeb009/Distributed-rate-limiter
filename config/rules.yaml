@@ -1,0 +1,6 @@
+rules:
+  - {name: api_default, algorithm: token_bucket, limit: 100, refill_per_sec: 2}
+  - {name: login_strict, algorithm: sliding_window_log, limit: 5, window_ms: 60000}
+  - {name: search, algorithm: sliding_window_counter, limit: 50, window_ms: 10000}
+failure_policy: fail_open
+redis_url: redis://redis:6379
