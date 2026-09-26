@@ -1,0 +1,9 @@
+.git
+.github
+build
+cmake-build-*
+*.o
+*.a
+*.so
+*.exe
+

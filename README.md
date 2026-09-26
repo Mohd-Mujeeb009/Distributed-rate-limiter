@@ -1,5 +1,8 @@
 # Distributed Rate Limiter
 
+[![CI](https://github.com/Mohd-Mujeeb009/Distributed-rate-limiter/actions/workflows/ci.yml/badge.svg)](https://github.com/Mohd-Mujeeb009/Distributed-rate-limiter/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/Mohd-Mujeeb009/Distributed-rate-limiter/actions/workflows/codeql.yml/badge.svg)](https://github.com/Mohd-Mujeeb009/Distributed-rate-limiter/actions/workflows/codeql.yml)
+
 A C++20 portfolio service that demonstrates rate-limiting algorithms, concurrency safety, dependency injection, atomic Redis Lua design, metrics, containers, and CI.
 
 ## Run
