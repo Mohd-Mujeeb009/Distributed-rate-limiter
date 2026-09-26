@@ -1,0 +1,22 @@
+services:
+  limiter1: &limiter
+    build: .
+    environment: [PORT=8081, REDIS_URL=redis://redis:6379]
+    depends_on: [redis]
+  limiter2: *limiter
+  limiter3: *limiter
+  redis:
+    image: redis:7.4-alpine
+    command: redis-server --save '' --appendonly no
+  nginx:
+    image: nginx:1.27-alpine
+    ports: ["8081:80"]
+    volumes: ["./deploy/nginx.conf:/etc/nginx/nginx.conf:ro"]
+    depends_on: [limiter1, limiter2, limiter3]
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    ports: ["9090:9090"]
+    volumes: ["./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:ro"]
+  grafana:
+    image: grafana/grafana:11.3.1
+    ports: ["3000:3000"]
