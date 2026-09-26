@@ -50,8 +50,13 @@ int main() {
       res.set_header("X-RateLimit-Limit", std::to_string(d.limit));
       res.set_header("X-RateLimit-Remaining", std::to_string(d.remaining));
       if (!d.allowed) res.set_header("Retry-After", std::to_string((d.retry_after_ms + 999) / 1000));
-      res.set_content(json{{"allowed", d.allowed}, {"limit", d.limit}, {"remaining", d.remaining},
-                           {"reset_ms", d.reset_ms}, {"retry_after_ms", d.retry_after_ms}}.dump(), "application/json");
+      json response;
+      response["allowed"] = d.allowed;
+      response["limit"] = d.limit;
+      response["remaining"] = d.remaining;
+      response["reset_ms"] = d.reset_ms;
+      response["retry_after_ms"] = d.retry_after_ms;
+      res.set_content(response.dump(), "application/json");
     } catch (const std::exception& e) {
       res.status = 400;
       res.set_content(json{{"error", e.what()}}.dump(), "application/json");
