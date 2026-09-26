@@ -1,6 +1,7 @@
 #include <atomic>
 #include <cstdlib>
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 
@@ -24,20 +25,20 @@ int main() {
   std::atomic<std::uint64_t> allowed{0}, blocked{0};
   httplib::Server server;
 
-  server.Get("/healthz", [](const auto&, auto& res) {
+  server.Get("/healthz", [](const httplib::Request&, httplib::Response& res) {
     res.set_content(R"({"status":"ok","store":"in-memory"})", "application/json");
   });
-  server.Get("/v1/rules", [&](const auto&, auto& res) {
+  server.Get("/v1/rules", [&](const httplib::Request&, httplib::Response& res) {
     json out = json::array();
     for (const auto& [name, rule] : rules) out.push_back({{"name", name}, {"limit", rule.limit}, {"window_ms", rule.window_ms}});
     res.set_content(out.dump(), "application/json");
   });
-  server.Get("/metrics", [&](const auto&, auto& res) {
+  server.Get("/metrics", [&](const httplib::Request&, httplib::Response& res) {
     res.set_content("# TYPE rate_limiter_requests_total counter\nrate_limiter_requests_total{decision=\"allowed\"} " +
                     std::to_string(allowed.load()) + "\nrate_limiter_requests_total{decision=\"blocked\"} " +
                     std::to_string(blocked.load()) + "\n", "text/plain; version=0.0.4");
   });
-  server.Post("/v1/check", [&](const auto& req, auto& res) {
+  server.Post("/v1/check", [&](const httplib::Request& req, httplib::Response& res) {
     try {
       const auto body = json::parse(req.body);
       const auto key = body.at("key").get<std::string>();
